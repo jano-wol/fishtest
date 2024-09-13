@@ -227,7 +227,7 @@ EOF
 
 # download fishtest
 sudo -i -u ${user_name} << EOF
-git clone --single-branch --branch master https://github.com/official-stockfish/fishtest.git
+git clone --single-branch --branch master-jw https://github.com/jano-wol/fishtest.git
 cd fishtest
 git config user.email "${git_user_email}"
 git config user.name "${git_user_name}"
@@ -449,6 +449,7 @@ EOF
 systemctl daemon-reload
 systemctl enable net-server.service
 systemctl start net-server.service
+sudo chmod -R 777 /home/fishtest
 
 cat << EOF
 connect a browser to:
