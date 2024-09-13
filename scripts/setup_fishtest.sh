@@ -155,7 +155,7 @@ EOF
 unlink /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/fishtest.conf /etc/nginx/sites-enabled/fishtest.conf
 usermod -aG ${user_name} www-data
-systemctl enable nginx.service
+systemctl disable nginx.service
 systemctl restart nginx.service
 
 # setup pyenv and install the latest python version
@@ -275,11 +275,11 @@ WorkingDirectory=${user_home}/fishtest/server
 WantedBy=multi-user.target
 EOF
 
-# enable the autostart for mongod.service and fishtest@.service
+# disable the autostart for mongod.service and fishtest@.service
 # check the log with: sudo journalctl -u fishtest@6543.service --since "2 days ago"
 systemctl daemon-reload
-systemctl enable mongod.service
-systemctl enable fishtest@{6543..6545}.service
+systemctl disable mongod.service
+systemctl disable fishtest@{6543..6545}.service
 
 # start fishtest server
 systemctl start mongod.service
@@ -447,7 +447,7 @@ WantedBy=multi-user.target
 EOF
 
 systemctl daemon-reload
-systemctl enable net-server.service
+systemctl disable net-server.service
 systemctl start net-server.service
 sudo chmod -R 777 /home/fishtest
 
