@@ -7,7 +7,7 @@
 # http://<ip_address> or http://<fully_qualified_domain_name>
 
 user_name='fishtest'
-user_pwd='<your_password>'
+user_pwd='_abc#d-12<34_'
 # try to find the ip address
 server_name=$(hostname --all-ip-addresses)
 server_name=$(echo $server_name)
@@ -193,9 +193,7 @@ pyenv global ${python_ver}
 EOF
 
 # install mongodb community edition for Ubuntu 18.04 (bionic), 20.04 (focal) or 22.04 (jammy)
-curl -fsSL https://pgp.mongodb.com/server-6.0.asc | gpg -o /usr/share/keyrings/mongodb-server-6.0.gpg --dearmor
-ubuntu_release=$(lsb_release -c | awk '{print $2}')
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-6.0.gpg ] https://repo.mongodb.org/apt/ubuntu ${ubuntu_release}/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
 apt update
 apt install -y mongodb-org
 
@@ -203,7 +201,7 @@ apt install -y mongodb-org
 #  wiredTiger:
 #    engineConfig:
 #      cacheSizeGB: 2.25
-cp /etc/mongod.conf mongod.conf.bkp
+# cp /etc/mongod.conf mongod.conf.bkp
 sed -i 's/^#  wiredTiger:/  wiredTiger:\n    engineConfig:\n      cacheSizeGB: 2.25/' /etc/mongod.conf
 # set the memory decommit
 sed -i '/^## Enterprise-Only Options:/i\setParameter:\n  tcmallocAggressiveMemoryDecommit: 1\n' /etc/mongod.conf
@@ -302,7 +300,7 @@ rdb = RunDb()
 for i in range(10):
     user_name = f"user{i:02d}"
     user_mail = f"{user_name}@example.org"
-    rdb.userdb.create_user(user_name, user_name, user_mail)
+    rdb.userdb.create_user(user_name, user_name, user_mail, "https://github.com/use-your-fork-here/Stockfish")
     if i == 0:
         rdb.userdb.add_user_group(user_name, "group:approvers")
     user = rdb.userdb.get_user(user_name)
