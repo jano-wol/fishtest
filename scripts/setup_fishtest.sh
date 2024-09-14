@@ -6,6 +6,12 @@
 # to use fishtest connect a browser to:
 # http://<ip_address> or http://<fully_qualified_domain_name>
 
+# Check if the script is running as root
+if [ "$EUID" -ne 0 ]; then
+  echo "This script must be run as root, trying to elevate privileges..."
+  exec sudo "$0" "$@"
+fi
+
 user_name='fishtest'
 user_pwd='_abc#d-12<34_'
 # try to find the ip address
