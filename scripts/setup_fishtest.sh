@@ -208,11 +208,17 @@ apt install -y mongodb-org
 #    engineConfig:
 #      cacheSizeGB: 2.25
 # cp /etc/mongod.conf mongod.conf.bkp
-sed -i 's/^#  wiredTiger:/  wiredTiger:\n    engineConfig:\n      cacheSizeGB: 2.25/' /etc/mongod.conf
+if ! grep -q "^  wiredTiger:" /etc/mongod.conf; then
+  sed -i 's/^#  wiredTiger:/  wiredTiger:\n    engineConfig:\n      cacheSizeGB: 2.25/' /etc/mongod.conf
+fi
 # set the memory decommit
-sed -i '/^## Enterprise-Only Options:/i\setParameter:\n  tcmallocAggressiveMemoryDecommit: 1\n' /etc/mongod.conf
+if ! grep -q "setParameter:" /etc/mongod.conf; then
+  sed -i '/^## Enterprise-Only Options:/i\setParameter:\n  tcmallocAggressiveMemoryDecommit: 1\n' /etc/mongod.conf
+fi
 # setup logrotate for mongodb
-sed -i '/^  logAppend: true/a\  logRotate: reopen' /etc/mongod.conf
+if ! grep -q "logRotate: reopen" /etc/mongod.conf; then
+  sed -i '/^  logAppend: true/a\  logRotate: reopen' /etc/mongod.conf
+fi
 
 cat << 'EOF' > /etc/logrotate.d/mongod
 /var/log/mongodb/mongod.log
