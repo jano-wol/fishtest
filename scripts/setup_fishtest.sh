@@ -22,6 +22,8 @@ server_name=$(echo $server_name)
 
 git_user_name='your_name'
 git_user_email='you@example.com'
+branch_name=$(git branch --show-current)
+origin_url=$(git remote get-url origin)
 
 # create user for fishtest
 useradd -m -s /bin/bash ${user_name}
@@ -239,7 +241,7 @@ EOF
 
 # download fishtest
 sudo -i -u ${user_name} << EOF
-git clone --single-branch --branch master-jw https://github.com/jano-wol/fishtest.git
+git clone --single-branch --branch ${branch_name} ${origin_url}
 cd fishtest
 git config user.email "${git_user_email}"
 git config user.name "${git_user_name}"
