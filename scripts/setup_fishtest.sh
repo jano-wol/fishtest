@@ -201,9 +201,39 @@ pyenv global ${python_ver}
 EOF
 
 # install mongodb community edition for Ubuntu 18.04 (bionic), 20.04 (focal) or 22.04 (jammy)
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
-apt update
-apt install -y mongodb-org
+ubuntu_version=$(lsb_release -rs)
+
+# MongoDB GPG Key URL
+gpg_key_url="https://pgp.mongodb.com/server-6.0.asc"
+gpg_key_file="/usr/share/keyrings/mongodb-server-6.0.gpg"
+
+# Function to install MongoDB for Ubuntu 22.04 and earlier
+install_mongodb_jammy() {
+  echo "Installing MongoDB for Ubuntu 22.04 or earlier..."
+  curl -fsSL ${gpg_key_url} | gpg --yes -o ${gpg_key_file} --dearmor
+  ubuntu_release=$(lsb_release -c | awk '{print $2}')
+  echo "deb [ arch=amd64,arm64 signed-by=${gpg_key_file} ] https://repo.mongodb.org/apt/ubuntu ${ubuntu_release}/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+  sudo apt update
+  sudo apt install -y mongodb-org
+}
+
+# Function to install MongoDB for Ubuntu 24.04 and later
+install_mongodb_lunar() {
+  echo "Installing MongoDB for Ubuntu 24.04 or later..."
+  echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu jammy/mongodb-org/6.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+  sudo apt update
+  sudo apt install -y mongodb-org
+}
+
+# Determine which method to use based on Ubuntu version
+if [[ "${ubuntu_version}" == "22.04" || "${ubuntu_version}" < "24.04" ]]; then
+  install_mongodb_jammy
+elif [[ "${ubuntu_version}" == "24.04" ]]; then
+  install_mongodb_lunar
+else
+  echo "Unsupported Ubuntu version: ${ubuntu_version}"
+  exit 1
+fi
 
 # set the cache size in /etc/mongod.conf
 #  wiredTiger:
